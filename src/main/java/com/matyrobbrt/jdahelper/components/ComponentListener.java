@@ -67,6 +67,19 @@ public abstract class ComponentListener {
     }
 
     /**
+     * Creates a new {@link ButtonBuilder} with a random component ID.
+     *
+     * @param style    the button style
+     * @param lifespan the component lifespan
+     * @param args     the component arguments
+     * @return the builder
+     */
+    @NotNull
+    public ButtonBuilder createButton(ButtonStyle style, Component.Lifespan lifespan, String... args) {
+        return createButton(style, lifespan, Arrays.asList(args));
+    }
+
+    /**
      * Creates a new {@link ButtonBuilder} with a random component ID, and the specified button ID arguments.
      *
      * @param style       the button style
