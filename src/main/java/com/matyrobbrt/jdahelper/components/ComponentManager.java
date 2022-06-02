@@ -2,9 +2,9 @@ package com.matyrobbrt.jdahelper.components;
 
 import static com.matyrobbrt.jdahelper.components.Component.ID_SPLITTER;
 import com.matyrobbrt.jdahelper.components.storage.ComponentStorage;
-import com.matyrobbrt.jdahelper.components.storage.context.ButtonInteractionContext;
-import com.matyrobbrt.jdahelper.components.storage.context.ModalInteractionContext;
-import com.matyrobbrt.jdahelper.components.storage.context.SelectMenuInteractionContext;
+import com.matyrobbrt.jdahelper.components.context.ButtonInteractionContext;
+import com.matyrobbrt.jdahelper.components.context.ModalInteractionContext;
+import com.matyrobbrt.jdahelper.components.context.SelectMenuInteractionContext;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;

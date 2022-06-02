@@ -1,4 +1,4 @@
-package com.matyrobbrt.jdahelper.components.storage.context;
+package com.matyrobbrt.jdahelper.components.context;
 
 import com.matyrobbrt.jdahelper.components.ComponentManager;
 import net.dv8tion.jda.api.interactions.ModalInteraction;

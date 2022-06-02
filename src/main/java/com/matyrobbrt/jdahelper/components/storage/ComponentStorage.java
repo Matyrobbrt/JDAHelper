@@ -2,15 +2,19 @@ package com.matyrobbrt.jdahelper.components.storage;
 
 import com.matyrobbrt.jdahelper.components.Component;
 import org.jdbi.v3.core.Jdbi;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 /**
  * A class used for saving {@link Component}s
  */
+@ParametersAreNonnullByDefault
 public interface ComponentStorage {
 
     /**
@@ -42,6 +46,7 @@ public interface ComponentStorage {
      * @param id the ID of the component to get
      * @return if the component exists, an optional containing it, otherwise an {@link Optional#empty() empty optional}.
      */
+    @NotNull
     Optional<Component> getComponent(final UUID id);
 
     /**
@@ -84,7 +89,19 @@ public interface ComponentStorage {
      *     }
      * </pre>
      */
+    @NotNull
     static ComponentStorage sql(final Jdbi jdbi, final String tableName) {
         return new SqlComponentStorage(jdbi, tableName);
+    }
+
+    /**
+     * Creates an {@link InMemoryComponentStorage}.
+     *
+     * @param backingMap the backing map of the storage
+     * @return the component storage
+     */
+    @NotNull
+    static ComponentStorage inMemory(Map<UUID, InMemoryComponentStorage.ComponentInstance> backingMap) {
+        return new InMemoryComponentStorage(backingMap);
     }
 }

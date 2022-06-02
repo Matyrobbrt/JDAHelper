@@ -12,9 +12,10 @@ import org.jdbi.v3.core.config.ConfigRegistry;
 import org.jdbi.v3.core.generic.GenericTypes;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import org.jdbi.v3.sqlobject.customizer.TimestampedConfig;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.lang.reflect.Type;
-import java.sql.SQLType;
 import java.sql.Types;
 import java.time.Instant;
 import java.time.ZoneOffset;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@ParametersAreNonnullByDefault
 @SuppressWarnings("ClassCanBeRecord")
 public class SqlComponentStorage implements ComponentStorage {
 
@@ -66,7 +68,7 @@ public class SqlComponentStorage implements ComponentStorage {
     }
 
     @Override
-    public Optional<Component> getComponent(UUID id) {
+    public @NotNull Optional<Component> getComponent(UUID id) {
         final var comp = jdbi.withHandle(handle -> handle.createQuery("select %s, %s, %s, %s from %s where %s = :id".formatted(
                         FEATURE_ROW_NAME, ID_ROW_NAME, ARGUMENTS_ROW_NAME, LIFESPAN_ROW_NAME, tableName, ID_ROW_NAME
                 ))

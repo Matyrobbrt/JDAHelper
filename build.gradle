@@ -1,20 +1,91 @@
 plugins {
-	id 'java'
-	id 'maven-publish'
-	id 'idea'
+    id 'java'
+    id 'maven-publish'
+    id 'idea'
 }
 
 group = 'com.matyrobbrt.jdahelper'
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'net.dv8tion:JDA:5.0.0-alpha.12'
-	implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'net.dv8tion:JDA:5.0.0-alpha.12'
+    implementation 'com.google.code.gson:gson:2.9.0'
 
-	var jdbi = '3.28.0'
-	implementation "org.jdbi:jdbi3-core:$jdbi"
-	implementation "org.jdbi:jdbi3-sqlobject:$jdbi"
+    var jdbi = '3.28.0'
+    implementation "org.jdbi:jdbi3-core:$jdbi"
+    implementation "org.jdbi:jdbi3-sqlobject:$jdbi"
+}
+
+allprojects {
+    compileJava {
+        options.release.set(17)
+    }
+    javadoc.options.addStringOption('Xdoclint:none', '-quiet')
+
+    apply plugin: 'maven-publish'
+    apply plugin: 'signing'
+    apply plugin: 'io.codearte.nexus-staging'
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+                pom {
+                    name = "jdahelper"
+                    description = "Utilities for the JDA Java Discord library"
+                    url = 'https://github.com/Matyrobbrt/JDAHelper'
+                    licenses {
+                        license {
+                            name = 'MIT License'
+                            url = 'https://www.opensource.org/licenses/mit-license.php'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'matyrobbrt'
+                            name = 'Matyrobbrt'
+                            email = 'matyrobbrt@gmail.com'
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git:git:github.com/matyrobbrt/jdahelper.git'
+                        developerConnection = 'scm:git:ssh://github.com/Matyrobbrt/JDAHelper.git'
+                        url = 'https://github.com/Matyrobbrt/JDAHelper'
+                    }
+                }
+            }
+        }
+        repositories {
+            maven {
+                name = "OSSRH"
+                url = project.hasProperty("snapshot") ? "https://s01.oss.sonatype.org/content/repositories/snapshots/" : "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+                credentials {
+                    username = findProperty("ossrhUser") ? ossrhUser : ""
+                    password = findProperty("ossrhPassword") ? ossrhPassword : ""
+                }
+            }
+        }
+    }
+    signing {
+        sign publishing.publications.mavenJava
+    }
+    nexusStaging {
+        serverUrl = "https://s01.oss.sonatype.org/service/local/"
+        username = findProperty("ossrhUser") ? ossrhUser : ""
+        password = findProperty("ossrhPassword") ? ossrhPassword : ""
+    }
+    if (project.hasProperty("close")) {
+        tasks.publish.finalizedBy closeAndReleaseRepository
+    }
+    jar {
+        destinationDirectory = file("./build/libs/${project.version}/")
+    }
+    javadocJar {
+        destinationDirectory = file("./build/libs/${project.version}/")
+    }
+    sourcesJar {
+        destinationDirectory = file("./build/libs/${project.version}/")
+    }
 }

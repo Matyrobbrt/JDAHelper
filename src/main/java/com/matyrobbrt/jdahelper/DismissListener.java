@@ -16,9 +16,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * A listener for dismissing.
+ * A listener for dismissing. <br>
+ * Register a {@link DismissListener} instance to a {@link net.dv8tion.jda.api.JDA bot} using {@link net.dv8tion.jda.api.JDA#addEventListener(Object...)}.
  */
+@SuppressWarnings("unused")
 public final class DismissListener implements EventListener {
+
+    public static final String BUTTON_PREFIX = "dismiss";
 
     @NotNull
     private static DefaultStyle defaultStyle = new DefaultStyle(ButtonStyle.SECONDARY, "\uD83D\uDEAE️ Dismiss", null);
@@ -43,7 +47,7 @@ public final class DismissListener implements EventListener {
             return;
         }
         final var idParts = button.getId().split("-");
-        if (!idParts[0].equals("dismiss")) {
+        if (!idParts[0].equals(BUTTON_PREFIX)) {
             return;
         }
         switch (idParts.length) {
@@ -85,7 +89,7 @@ public final class DismissListener implements EventListener {
      * @return the button
      */
     public static Button createDismissButton() {
-        return Button.of(defaultStyle.style(), "dismiss", defaultStyle.label(), defaultStyle.emoji());
+        return Button.of(defaultStyle.style(), BUTTON_PREFIX, defaultStyle.label(), defaultStyle.emoji());
     }
 
     /**
@@ -95,7 +99,7 @@ public final class DismissListener implements EventListener {
      * @return the button
      */
     public static Button createDismissButton(final long buttonOwner) {
-        return Button.of(defaultStyle.style(), "dismiss-" + buttonOwner, defaultStyle.label(), defaultStyle.emoji());
+        return Button.of(defaultStyle.style(), BUTTON_PREFIX + "-" + buttonOwner, defaultStyle.label(), defaultStyle.emoji());
     }
 
     /**
@@ -105,7 +109,7 @@ public final class DismissListener implements EventListener {
      * @return the button
      */
     public static Button createDismissButton(final String buttonOwner) {
-        return Button.of(defaultStyle.style(), "dismiss-" + buttonOwner, defaultStyle.label(), defaultStyle.emoji());
+        return Button.of(defaultStyle.style(), BUTTON_PREFIX + "-" + buttonOwner, defaultStyle.label(), defaultStyle.emoji());
     }
 
     /**
@@ -116,7 +120,7 @@ public final class DismissListener implements EventListener {
      * @return the button
      */
     public static Button createDismissButton(final long buttonOwner, final long commandMessageId) {
-        return Button.of(defaultStyle.style(), "dismiss-" + buttonOwner + "-" + commandMessageId, defaultStyle.label(), defaultStyle.emoji());
+        return Button.of(defaultStyle.style(), BUTTON_PREFIX + "-" + buttonOwner + "-" + commandMessageId, defaultStyle.label(), defaultStyle.emoji());
     }
 
     /**

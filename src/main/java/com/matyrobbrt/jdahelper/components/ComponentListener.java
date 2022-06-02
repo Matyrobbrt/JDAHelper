@@ -1,8 +1,8 @@
 package com.matyrobbrt.jdahelper.components;
 
-import com.matyrobbrt.jdahelper.components.storage.context.ButtonInteractionContext;
-import com.matyrobbrt.jdahelper.components.storage.context.ModalInteractionContext;
-import com.matyrobbrt.jdahelper.components.storage.context.SelectMenuInteractionContext;
+import com.matyrobbrt.jdahelper.components.context.ButtonInteractionContext;
+import com.matyrobbrt.jdahelper.components.context.ModalInteractionContext;
+import com.matyrobbrt.jdahelper.components.context.SelectMenuInteractionContext;
 import com.matyrobbrt.jdahelper.util.ButtonBuilder;
 import net.dv8tion.jda.api.entities.Emoji;
 import net.dv8tion.jda.api.interactions.components.Modal;
