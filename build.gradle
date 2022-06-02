@@ -1,0 +1,20 @@
+plugins {
+	id 'java'
+	id 'maven-publish'
+	id 'idea'
+}
+
+group = 'com.matyrobbrt.jdahelper'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'net.dv8tion:JDA:5.0.0-alpha.12'
+	implementation 'com.google.code.gson:gson:2.9.0'
+
+	var jdbi = '3.28.0'
+	implementation "org.jdbi:jdbi3-core:$jdbi"
+	implementation "org.jdbi:jdbi3-sqlobject:$jdbi"
+}
