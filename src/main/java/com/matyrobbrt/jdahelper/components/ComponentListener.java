@@ -93,7 +93,7 @@ public abstract class ComponentListener {
         final var comp = new Component(name, UUID.randomUUID(), args, lifespan);
         insertComponent(comp);
         return ButtonBuilder.builder(style)
-                .idOrUrl(Component.createIdWithArguments(comp.featureId(), idArguments));
+                .idOrUrl(Component.createIdWithArguments(comp.uuid(), idArguments));
     }
 
     /**
