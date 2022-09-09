@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.Channel;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
@@ -116,7 +117,7 @@ public interface ItemComponentInteractionContext<T extends IReplyCallback> exten
 
         @NotNull
         @Override
-        public Locale getUserLocale() {
+        public DiscordLocale getUserLocale() {
             return getEvent().getUserLocale();
         }
 

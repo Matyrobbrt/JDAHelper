@@ -1,21 +1,24 @@
 package com.matyrobbrt.jdahelper.pagination;
 
-import static net.dv8tion.jda.api.entities.Emoji.fromUnicode;
 import com.matyrobbrt.jdahelper.DismissListener;
 import com.matyrobbrt.jdahelper.components.Component;
 import com.matyrobbrt.jdahelper.components.ComponentListener;
-import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.Emoji;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
+import net.dv8tion.jda.api.utils.messages.AbstractMessageBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
+
+import static net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode;
 
 /**
  * Utility class for paginating messages, using {@link com.matyrobbrt.jdahelper.components.Component components}. <br>
@@ -99,7 +102,7 @@ public interface Paginator {
      * @return a built message that can be sent
      */
     @Nonnull
-    MessageBuilder getMessage(int startingIndex, int maximum, final List<String> arguments);
+    MessageCreateBuilder getMessage(int startingIndex, int maximum, final List<String> arguments);
 
     /**
      * Create the row of Component interaction buttons.
@@ -115,7 +118,7 @@ public interface Paginator {
     ActionRow createScrollButtons(String id, int start, int maximum, @Nullable Long buttonOwner);
 
     /**
-     * Create a {@link Message} which, if the number of items requires, also contains buttons for scrolling.
+     * Create a {@link MessageCreateData} which, if the number of items requires, also contains buttons for scrolling.
      *
      * @param startingIndex the index of the first item to display
      * @param maximum       the maximum of items
@@ -123,10 +126,10 @@ public interface Paginator {
      * @param args          arguments the arguments that will be saved in the database, bound to the button's component ID
      * @return the message
      */
-    Message createPaginatedMessage(final int startingIndex, final int maximum, @Nullable final Long messageOwner, final List<String> args);
+    MessageCreateData createPaginatedMessage(final int startingIndex, final int maximum, @Nullable final Long messageOwner, final List<String> args);
 
     /**
-     * Create a {@link Message} which, if the number of items requires, also contains buttons for scrolling.
+     * Create a {@link MessageCreateData} which, if the number of items requires, also contains buttons for scrolling.
      *
      * @param startingIndex the index of the first item to display
      * @param maximum       the maximum of items
@@ -134,7 +137,7 @@ public interface Paginator {
      * @param args          arguments the arguments that will be saved in the database, bound to the button's component ID
      * @return the message
      */
-    default Message createPaginatedMessage(final int startingIndex, final int maximum, @Nullable final Long messageOwner, final String... args) {
+    default MessageCreateData createPaginatedMessage(final int startingIndex, final int maximum, @Nullable final Long messageOwner, final String... args) {
         return createPaginatedMessage(startingIndex, maximum, messageOwner, Arrays.asList(args));
     }
 
@@ -160,7 +163,7 @@ public interface Paginator {
          * @return a built message that can be sent
          */
         @Nonnull
-        MessageBuilder getMessage(int startingIndex, int maximum, final List<String> arguments);
+        MessageCreateBuilder getMessage(int startingIndex, int maximum, final List<String> arguments);
     }
 
     @FunctionalInterface

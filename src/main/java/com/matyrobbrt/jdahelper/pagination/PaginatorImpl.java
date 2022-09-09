@@ -4,10 +4,11 @@ import com.matyrobbrt.jdahelper.DismissListener;
 import com.matyrobbrt.jdahelper.components.Component;
 import com.matyrobbrt.jdahelper.components.ComponentListener;
 import com.matyrobbrt.jdahelper.components.context.ButtonInteractionContext;
-import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
+import net.dv8tion.jda.api.utils.messages.MessageEditData;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -82,8 +83,9 @@ public final class PaginatorImpl implements Paginator {
                 final var start = current + itemsPerPage;
 
                 oldActionRows.add(0, createScrollButtons(buttonId, start, maximum, owner));
-                event.editMessage(getMessage(start, maximum, newArgs).build())
-                        .setActionRows(oldActionRows)
+                event.editMessage(MessageEditData.fromCreateData(getMessage(start, maximum, newArgs)
+                                .setComponents(oldActionRows)
+                                .build()))
                         .queue();
 
                 // Argument 0 == current index
@@ -92,8 +94,9 @@ public final class PaginatorImpl implements Paginator {
             case LAST -> {
                 final var start = maximum - Math.min(maximum, itemsPerPage);
                 oldActionRows.add(0, createScrollButtons(buttonId, start, maximum, owner));
-                event.editMessage(getMessage(start, maximum, newArgs).build())
-                        .setActionRows(oldActionRows)
+                event.editMessage(MessageEditData.fromCreateData(getMessage(start, maximum, newArgs)
+                                .setComponents(oldActionRows)
+                                .build()))
                         .queue();
 
                 // Argument 0 == current index
@@ -104,8 +107,9 @@ public final class PaginatorImpl implements Paginator {
                 final var start = current - itemsPerPage;
 
                 oldActionRows.add(0, createScrollButtons(buttonId, start, maximum, owner));
-                event.editMessage(getMessage(start, maximum, newArgs).build())
-                        .setActionRows(oldActionRows)
+                event.editMessage(MessageEditData.fromCreateData(getMessage(start, maximum, newArgs)
+                                .setComponents(oldActionRows)
+                                .build()))
                         .queue();
 
                 // Argument 0 == current index
@@ -115,8 +119,9 @@ public final class PaginatorImpl implements Paginator {
                 final var start = 0;
 
                 oldActionRows.add(0, createScrollButtons(buttonId, start, maximum, owner));
-                event.editMessage(getMessage(start, maximum, newArgs).build())
-                        .setActionRows(oldActionRows)
+                event.editMessage(MessageEditData.fromCreateData(getMessage(start, maximum, newArgs)
+                                .setComponents(oldActionRows)
+                                .build()))
                         .queue();
 
                 // Argument 0 == current index
@@ -127,7 +132,7 @@ public final class PaginatorImpl implements Paginator {
 
     @NotNull
     @Override
-    public MessageBuilder getMessage(final int startingIndex, final int maximum, final List<String> arguments) {
+    public MessageCreateBuilder getMessage(final int startingIndex, final int maximum, final List<String> arguments) {
         return embedGetter.getMessage(startingIndex, maximum, arguments);
     }
 
@@ -222,10 +227,10 @@ public final class PaginatorImpl implements Paginator {
     }
 
     @Override
-    public Message createPaginatedMessage(final int startingIndex, final int maximum, final @Nullable Long messageOwner, final List<String> args) {
+    public MessageCreateData createPaginatedMessage(final int startingIndex, final int maximum, final @Nullable Long messageOwner, final List<String> args) {
         final var id = UUID.randomUUID();
         final var argsList = new ArrayList<>(args);
-        final var message = new MessageBuilderWidener(getMessage(startingIndex, maximum, argsList));
+        final var message = getMessage(startingIndex, maximum, argsList);
         final var startStr = String.valueOf(startingIndex);
         final var maxStr = String.valueOf(maximum);
         if (argsList.size() == 0) {
@@ -237,17 +242,7 @@ public final class PaginatorImpl implements Paginator {
         }
         final var component = new Component(getListener().getName(), id, argsList, Component.Lifespan.TEMPORARY);
         getListener().insertComponent(component);
-        message.addActionRow(createScrollButtons(id.toString(), startingIndex, maximum, messageOwner));
+        message.addComponents(createScrollButtons(id.toString(), startingIndex, maximum, messageOwner));
         return message.build();
-    }
-
-    protected static class MessageBuilderWidener extends MessageBuilder {
-        public MessageBuilderWidener(final MessageBuilder builder) {
-            super(builder);
-        }
-
-        public void addActionRow(final ActionRow actionRow) {
-            components.add(actionRow);
-        }
     }
 }

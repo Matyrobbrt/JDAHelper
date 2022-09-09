@@ -1,9 +1,9 @@
 package com.matyrobbrt.jdahelper;
 
-import net.dv8tion.jda.api.entities.Emoji;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
@@ -164,6 +164,6 @@ public final class DismissListener implements EventListener {
         return createDismissButton(interaction.getUser());
     }
 
-    record DefaultStyle(ButtonStyle style, @Nullable String label, @Nullable Emoji emoji) {
+    public record DefaultStyle(ButtonStyle style, @Nullable String label, @Nullable Emoji emoji) {
     }
 }

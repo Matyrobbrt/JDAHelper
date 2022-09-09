@@ -3,7 +3,7 @@ package com.matyrobbrt.jdahelper.pagination;
 import com.matyrobbrt.jdahelper.components.Component;
 import com.matyrobbrt.jdahelper.components.ComponentListener;
 import com.matyrobbrt.jdahelper.components.context.ButtonInteractionContext;
-import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -19,7 +19,7 @@ public class PaginatorBuilder {
     private int itemsPerPage = 25;
     private boolean dismissible = true;
     private boolean buttonsOwnerOnly;
-    private Paginator.MessageGetter messageGetter = (startingIndex, maximum, arguments) -> new MessageBuilder("Unknown page.");
+    private Paginator.MessageGetter messageGetter = (startingIndex, maximum, arguments) -> new MessageCreateBuilder().setContent("Unknown page.");
     private Paginator.ButtonFactory buttonFactory = Paginator.DEFAULT_BUTTON_FACTORY;
     private List<Paginator.ButtonType> buttonOrder = Paginator.DEFAULT_BUTTON_ORDER;
 
