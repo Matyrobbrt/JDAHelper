@@ -214,9 +214,9 @@ public interface Paginator {
     }
 
     /**
-     * The logical order of the types is:
-     * first, previous, next, last
-     * <<|, <, >, |>>
+     * The logical order of the types is: <br>
+     * {@code first, previous, next, last} <br>
+     * {@code <<|, <, >, |>>}
      */
     enum ButtonType {
         FIRST("first"),

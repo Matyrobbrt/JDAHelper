@@ -79,7 +79,7 @@ public final class DismissListener implements EventListener {
     }
 
     private static boolean canDelete(final String targetId, final ButtonInteractionEvent event) {
-        return targetId.equals(event.getUser().getId()) && !event.isAcknowledged() && !event.getMessage().getType().canDelete();
+        return targetId.equals(event.getUser().getId()) && !event.isAcknowledged() && event.getMessage().getType().canDelete();
     }
 
     /**
