@@ -24,7 +24,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 @ParametersAreNonnullByDefault
-@SuppressWarnings("ClassCanBeRecord")
 public class SqlComponentStorage implements ComponentStorage {
 
     public static final String FEATURE_ROW_NAME = "feature";

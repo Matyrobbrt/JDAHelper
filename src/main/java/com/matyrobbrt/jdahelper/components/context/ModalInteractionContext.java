@@ -3,7 +3,6 @@ package com.matyrobbrt.jdahelper.components.context;
 import com.matyrobbrt.jdahelper.components.ComponentManager;
 import net.dv8tion.jda.api.interactions.ModalInteraction;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
-import net.dv8tion.jda.internal.utils.Checks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
