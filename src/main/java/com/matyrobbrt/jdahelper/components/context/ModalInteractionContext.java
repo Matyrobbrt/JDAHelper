@@ -1,7 +1,7 @@
 package com.matyrobbrt.jdahelper.components.context;
 
 import com.matyrobbrt.jdahelper.components.ComponentManager;
-import net.dv8tion.jda.api.interactions.ModalInteraction;
+import net.dv8tion.jda.api.interactions.modals.ModalInteraction;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 
 import javax.annotation.Nonnull;

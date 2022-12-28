@@ -8,7 +8,7 @@ import com.matyrobbrt.jdahelper.components.context.SelectMenuInteractionContext;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.GenericSelectMenuInteractionEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
@@ -74,7 +74,7 @@ public class ComponentManager implements EventListener {
         try {
             if (event instanceof ButtonInteractionEvent btn) {
                 onButtonInteraction(btn);
-            } else if (event instanceof SelectMenuInteractionEvent sEvent) {
+            } else if (event instanceof GenericSelectMenuInteractionEvent<?, ?> sEvent) {
                 onSelectMenuInteraction(sEvent);
             } else if (event instanceof ModalInteractionEvent mEvent) {
                 onModalInteraction(mEvent);
@@ -102,7 +102,7 @@ public class ComponentManager implements EventListener {
         }
     }
 
-    private void onSelectMenuInteraction(@NotNull final SelectMenuInteractionEvent event) {
+    private void onSelectMenuInteraction(@NotNull final GenericSelectMenuInteractionEvent<?, ?> event) {
         final var menuArgs = Objects.requireNonNull(event.getSelectMenu().getId()).split(ID_SPLITTER);
         final var id = UUID.fromString(menuArgs[0]);
         getStorage().getComponent(id).ifPresentOrElse(component -> {
@@ -110,7 +110,7 @@ public class ComponentManager implements EventListener {
             if (listener == null) {
                 event.deferReply(true).setContent("It seems like I can't handle this select menu anymore due to its listener being deleted.").queue();
             } else {
-                listener.onSelectMenuInteraction(new SelectMenuInteractionContext.Impl(
+                listener.onSelectMenuInteraction(new SelectMenuInteractionContext.Impl<>(
                         event, this, component.uuid(),
                         component.arguments(), splitItemComponentArguments(menuArgs)
                 ));

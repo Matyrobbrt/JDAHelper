@@ -4,11 +4,16 @@ import com.matyrobbrt.jdahelper.components.context.ButtonInteractionContext;
 import com.matyrobbrt.jdahelper.components.context.ModalInteractionContext;
 import com.matyrobbrt.jdahelper.components.context.SelectMenuInteractionContext;
 import com.matyrobbrt.jdahelper.util.ButtonBuilder;
+import net.dv8tion.jda.api.entities.IMentionable;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
-import net.dv8tion.jda.api.interactions.components.Modal;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
-import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
+import net.dv8tion.jda.api.interactions.components.selections.EntitySelectInteraction;
+import net.dv8tion.jda.api.interactions.components.selections.EntitySelectMenu;
+import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
+import net.dv8tion.jda.api.interactions.components.selections.StringSelectInteraction;
+import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
+import net.dv8tion.jda.api.interactions.modals.Modal;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -32,6 +37,15 @@ public abstract class ComponentListener {
     ComponentListener(final String name) {
         this.name = name;
     }
+
+    /**
+     * The builder for string select menus.
+     */
+    public final SelectMenuBuilder<StringSelectMenu, StringSelectMenu.Builder> stringSelectMenuBuilder = new SelectMenuBuilder<>(this, StringSelectMenu::create);
+    /**
+     * The builder for entity select menus.
+     */
+    public final SelectMenuBuilder<EntitySelectMenu, EntitySelectMenu.Builder> entitySelectMenuBuilder = new SelectMenuBuilder<>(this, id -> new EntitySelectMenu.Builder(id) {});
 
     /**
      * Creates a button with a random component ID.
@@ -94,47 +108,6 @@ public abstract class ComponentListener {
         insertComponent(comp);
         return ButtonBuilder.builder(style)
                 .idOrUrl(Component.createIdWithArguments(comp.uuid(), idArguments));
-    }
-
-    /**
-     * Creates a select menu builder with a random component ID.
-     *
-     * @param lifespan the lifespan of the component
-     * @param args     the component's arguments
-     * @return the select menu builder
-     */
-    @NotNull
-    public SelectMenu.Builder createMenu(@NotNull Component.Lifespan lifespan, final String... args) {
-        return createMenu(lifespan, Arrays.asList(args));
-    }
-
-    /**
-     * Creates a select menu builder with a random component ID.
-     *
-     * @param lifespan the lifespan of the component
-     * @param args     the component's arguments
-     * @return the select menu builder
-     */
-    @NotNull
-    public SelectMenu.Builder createMenu(@NotNull Component.Lifespan lifespan, final List<String> args) {
-        final var comp = new Component(name, UUID.randomUUID(), args, lifespan);
-        insertComponent(comp);
-        return SelectMenu.create(comp.uuid().toString());
-    }
-
-    /**
-     * Creates a select menu builder with a random component ID, and the specified menu ID arguments.
-     *
-     * @param lifespan    the lifespan of the component
-     * @param args        the component's arguments
-     * @param idArguments the menu's ID arguments
-     * @return the select menu builder
-     */
-    @NotNull
-    public SelectMenu.Builder createMenu(@NotNull Component.Lifespan lifespan, final List<String> args, final Object... idArguments) {
-        final var comp = new Component(name, UUID.randomUUID(), args, lifespan);
-        insertComponent(comp);
-        return SelectMenu.create(Component.createIdWithArguments(comp.uuid(), idArguments));
     }
 
     /**
@@ -220,7 +193,7 @@ public abstract class ComponentListener {
      *
      * @param context the context
      */
-    public abstract void onSelectMenuInteraction(final SelectMenuInteractionContext context);
+    public abstract void onSelectMenuInteraction(final SelectMenuInteractionContext<?, ?, ?> context);
 
     /**
      * Handles the interaction with a modal.
@@ -245,7 +218,7 @@ public abstract class ComponentListener {
         @Nullable
         private final Consumer<? super ComponentListener> whenBuilt;
         private Consumer<? super ButtonInteractionContext> onButton;
-        private Consumer<? super SelectMenuInteractionContext> onSelectMenu;
+        private Consumer<? super SelectMenuInteractionContext<?, ?, ?>> onSelectMenu;
         private Consumer<? super ModalInteractionContext> onModal;
 
         Builder(final String name, @Nullable final Consumer<? super ComponentListener> whenBuilt) {
@@ -270,13 +243,63 @@ public abstract class ComponentListener {
          * @param onSelectMenu the action that should be executed on select menu interaction
          * @return the builder instance
          */
-        public Builder onSelectMenuInteraction(final Consumer<? super SelectMenuInteractionContext> onSelectMenu) {
+        public Builder onSelectMenuInteraction(final Consumer<? super SelectMenuInteractionContext<?, ?, ?>> onSelectMenu) {
             this.onSelectMenu = onSelectMenu;
             return this;
         }
 
         /**
-         * Sets the action that should be executed on {@link net.dv8tion.jda.api.interactions.components.Modal} interaction.
+         * Sets the action that should be executed on {@link net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu} interaction.
+         *
+         * @param onSelectMenu the action that should be executed on entity select menu interaction
+         * @return the builder instance
+         */
+        @SuppressWarnings("unchecked")
+        public Builder onStringMenuInteraction(final Consumer<? super SelectMenuInteractionContext<String, StringSelectMenu, StringSelectInteraction>> onSelectMenu) {
+            final Consumer<? super SelectMenuInteractionContext<?, ?, ?>> old = this.onSelectMenu;
+            if (old == null) {
+                return this.onSelectMenuInteraction(it -> {
+                    if (it.getEvent() instanceof StringSelectInteraction) {
+                        onSelectMenu.accept((SelectMenuInteractionContext<String, StringSelectMenu, StringSelectInteraction>) it);
+                    }
+                });
+            } else {
+                return this.onSelectMenuInteraction(it -> {
+                    if (it.getEvent() instanceof StringSelectInteraction) {
+                        onSelectMenu.accept((SelectMenuInteractionContext<String, StringSelectMenu, StringSelectInteraction>) it);
+                    }
+                    old.accept(it);
+                });
+            }
+        }
+
+        /**
+         * Sets the action that should be executed on {@link net.dv8tion.jda.api.interactions.components.selections.EntitySelectMenu} interaction.
+         *
+         * @param onSelectMenu the action that should be executed on entity select menu interaction
+         * @return the builder instance
+         */
+        @SuppressWarnings("unchecked")
+        public Builder onEntitySelectMenuInteraction(final Consumer<? super SelectMenuInteractionContext<IMentionable, EntitySelectMenu, EntitySelectInteraction>> onSelectMenu) {
+            final Consumer<? super SelectMenuInteractionContext<?, ?, ?>> old = this.onSelectMenu;
+            if (old == null) {
+                return this.onSelectMenuInteraction(it -> {
+                    if (it.getEvent() instanceof EntitySelectInteraction) {
+                        onSelectMenu.accept((SelectMenuInteractionContext<IMentionable, EntitySelectMenu, EntitySelectInteraction>) it);
+                    }
+                });
+            } else {
+                return this.onSelectMenuInteraction(it -> {
+                    if (it.getEvent() instanceof EntitySelectInteraction) {
+                        onSelectMenu.accept((SelectMenuInteractionContext<IMentionable, EntitySelectMenu, EntitySelectInteraction>) it);
+                    }
+                    old.accept(it);
+                });
+            }
+        }
+
+        /**
+         * Sets the action that should be executed on {@link Modal} interaction.
          *
          * @param onModal the action that should be executed on modal interaction
          * @return the builder instance
@@ -294,7 +317,7 @@ public abstract class ComponentListener {
         public ComponentListener build() {
             final Consumer<? super ButtonInteractionContext> onButton = this.onButton == null ? b -> {
             } : this.onButton;
-            final Consumer<? super SelectMenuInteractionContext> onSelectMenu = this.onSelectMenu == null ? b -> {
+            final Consumer<? super SelectMenuInteractionContext<?, ?, ?>> onSelectMenu = this.onSelectMenu == null ? b -> {
             } : this.onSelectMenu;
             final Consumer<? super ModalInteractionContext> onModal = this.onModal == null ? b -> {
             } : this.onModal;
@@ -305,7 +328,7 @@ public abstract class ComponentListener {
                 }
 
                 @Override
-                public void onSelectMenuInteraction(final SelectMenuInteractionContext context) {
+                public void onSelectMenuInteraction(final SelectMenuInteractionContext<?, ?, ?> context) {
                     onSelectMenu.accept(context);
                 }
 

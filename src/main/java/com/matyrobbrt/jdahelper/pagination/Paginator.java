@@ -3,12 +3,10 @@ package com.matyrobbrt.jdahelper.pagination;
 import com.matyrobbrt.jdahelper.DismissListener;
 import com.matyrobbrt.jdahelper.components.Component;
 import com.matyrobbrt.jdahelper.components.ComponentListener;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
-import net.dv8tion.jda.api.utils.messages.AbstractMessageBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
