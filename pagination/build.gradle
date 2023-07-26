@@ -1,0 +1,4 @@
+evaluationDependsOn(':components')
+dependencies {
+    api project(':components')
+}

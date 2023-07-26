@@ -1,58 +1,25 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0"
-    }
-}
 plugins {
     id 'java'
     id 'idea'
+    id 'maven-publish'
+    id 'io.codearte.nexus-staging' version '0.30.0'
 }
 
 group = 'com.matyrobbrt'
 archivesBaseName = 'jdahelper'
 
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation 'net.dv8tion:JDA:5.0.0-beta.2'
-    implementation 'com.google.code.gson:gson:2.9.0'
-
-    var jdbi = '3.28.0'
-    implementation "org.jdbi:jdbi3-core:$jdbi"
-    implementation "org.jdbi:jdbi3-sqlobject:$jdbi"
-
-    compileOnly 'com.google.code.findbugs:annotations:3.0.1'
-}
-
-java {
-    withJavadocJar()
-    withSourcesJar()
-}
-
 allprojects {
-    compileJava {
-        options.release.set(17)
-        options.encoding = 'UTF-8'
-    }
-    javadoc {
-        options.addStringOption('Xdoclint:none', '-quiet')
-        options.encoding = 'UTF-8'
-    }
-
+    apply plugin: 'java'
+    apply plugin: 'java-library'
     apply plugin: 'maven-publish'
     apply plugin: 'signing'
-    apply plugin: 'io.codearte.nexus-staging'
+
     publishing {
         publications {
             mavenJava(MavenPublication) {
                 from components.java
                 pom {
-                    name = "jdahelper"
+                    name = "jdahelper${project == rootProject ? '' : "-${project.name}"}"
                     description = "Utilities for the JDA Java Discord library"
                     url = 'https://github.com/Matyrobbrt/JDAHelper'
                     licenses {
@@ -95,16 +62,90 @@ allprojects {
         username = findProperty("ossrhUser") ? ossrhUser : ""
         password = findProperty("ossrhPassword") ? ossrhPassword : ""
     }
-    if (project.hasProperty("close")) {
-        tasks.publish.finalizedBy closeAndReleaseRepository
+    tasks.publish.finalizedBy closeAndReleaseRepository
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'net.dv8tion:JDA:5.0.0-beta.2'
+    implementation 'com.google.code.gson:gson:2.9.0'
+
+    var jdbi = '3.28.0'
+    implementation "org.jdbi:jdbi3-core:$jdbi"
+    implementation "org.jdbi:jdbi3-sqlobject:$jdbi"
+
+    compileOnly 'com.google.code.findbugs:annotations:3.0.1'
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+subprojects {
+    project.metaClass.dependencySourceSet = { String depName ->
+        final String srcSet = "dep${depName.capitalize()}"
+        final src = sourceSets.register(srcSet)
+        dependencies {
+            "${srcSet}Implementation" sourceSets.main.output
+            "${srcSet}Implementation" project(":$depName")
+        }
+
+        tasks.named('jar', Jar) {
+            from(src.get().output)
+        }
+
+        configurations {
+            named("${srcSet}Implementation") {
+                extendsFrom(configurations.implementation)
+            }
+        }
     }
-    jar {
-        destinationDirectory = file("./build/libs/${project.version}/")
+
+    group = 'com.matyrobbrt.jdahelper'
+
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(17))
+        }
+        withJavadocJar()
+        withSourcesJar()
     }
-    javadocJar {
-        destinationDirectory = file("./build/libs/${project.version}/")
+
+    repositories {
+        mavenCentral()
     }
-    sourcesJar {
-        destinationDirectory = file("./build/libs/${project.version}/")
+
+    final isCore = project.name == 'core'
+    if (!isCore) {
+        evaluationDependsOn(':core')
+    }
+
+    dependencies {
+        implementation 'net.dv8tion:JDA:5.0.0-beta.2'
+        compileOnly 'com.google.code.findbugs:annotations:3.0.1'
+
+        testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
+        testImplementation 'org.assertj:assertj-core:3.24.2'
+
+        if (!isCore) {
+            api project(':core')
+        }
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+    javadoc {
+        options.addStringOption('Xdoclint:none', '-quiet')
+        options.encoding = 'UTF-8'
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
     }
 }

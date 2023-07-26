@@ -1,1 +1,3 @@
 rootProject.name = 'jdahelper'
+
+include(':core', ':components', ':pagination', ':commands')
